@@ -13,9 +13,12 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "centos/7"
+  config.hostmanager.enabled = true
+  config.hostmanager.include_offline = true
 
   config.vm.define "my-gitlab-ce" do |c|
     c.vm.hostname = "my-gitlab-ce"
+    c.vm.network "private_network", ip: "192.168.0.10"
   end
 
   # Disable automatic box update checking. If you disable this, then
@@ -23,11 +26,11 @@ Vagrant.configure("2") do |config|
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
- # Create a forwarded port mapping which allows access to a specific port
+  # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 22, host: 2222
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  # config.vm.network "forwarded_port", guest: 22, host: 2222
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -74,24 +77,29 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
       sudo yum install -y curl policycoreutils openssh-server openssh-clients
-      sudo systemctl enable sshd
-      sudo systemctl start sshd
-      sudo yum install postfix
-      sudo systemctl enable postfix
-      sudo systemctl start postfix
+      sudo systemctl enable sshd 
+      sudo systemctl start sshd 
+      sudo yum install postfix 
+      sudo systemctl enable postfix 
+      sudo systemctl start postfix 
       sudo yum install -y firewalld
       sudo systemctl enable firewalld
       sudo systemctl start firewalld
-      sudo firewall-cmd --permanent --add-service=http
-      sudo systemctl reload firewalld
+      sudo firewall-cmd --permanent --add-service=http 
+      sudo systemctl reload firewalld 
       # Install & configure GitLab CE
-      curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+      curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash 
       sudo yum install -y gitlab-ce
       sudo gitlab-ctl reconfigure
-      # Install & register GitLab CI Runner
+      # Install GitLab CI Runner
       curl -L  https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh | sudo bash
       sudo yum install -y gitlab-ci-multi-runner
-
+      # Install Docker CE needed for docker runner
+      sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+      sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      sudo yum makecache fast
+      sudo yum -y install docker-ce
+      sudo systemctl start docker
+      
   SHELL
 end
-
