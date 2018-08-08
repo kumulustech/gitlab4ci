@@ -90,6 +90,7 @@ Vagrant.configure("2") do |config|
       # Install & configure GitLab CE
       curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash 
       sudo yum install -y gitlab-ce
+      sudo sed -i -e s/gitlab.example.com/my-gitlab-ce/g /etc/gitlab/gitlab.rb
       sudo gitlab-ctl reconfigure
       # Install GitLab CI Runner
       curl -L  https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh | sudo bash
