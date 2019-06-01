@@ -74,8 +74,10 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
+      # install updates
+      sudo yum update -y
+      sudo yum upgrade -y
+      #
       sudo yum install -y curl policycoreutils openssh-server openssh-clients
       sudo systemctl enable sshd 
       sudo systemctl start sshd 
@@ -86,7 +88,9 @@ Vagrant.configure("2") do |config|
       sudo systemctl enable firewalld
       sudo systemctl start firewalld
       sudo firewall-cmd --permanent --add-service=http 
-      sudo systemctl reload firewalld 
+      sudo systemctl reload firewalld
+      # let network connection settle
+      sleep 5
       # Install & configure GitLab CE
       curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash 
       sudo yum install -y gitlab-ce
